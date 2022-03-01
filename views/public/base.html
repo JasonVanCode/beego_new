@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{.admin.title}}</title>
+  <meta name="_xsrf" content="{{.xsrf_token}}" />
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+  <!-- 首页 css js 的加载 -->
+  {{template "public/header_css.html" .}}
+  {{template "public/header_js.html" .}}
+  <style type="text/css">
+    .select2-container .select2-selection--single{
+      height: 40px !important;
+    }
+    #dataForm .error {
+      color: red;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice{
+      background-color: #007bff;
+      border: 1px solid #2586ef;
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini layout-fixed">
+<div class="wrapper">
+
+  <!-- Preloader -->
+<!--  页面的预加载-->
+<!--  <div class="preloader flex-column justify-content-center align-items-center">-->
+<!--    <img class="animation__shake" src="/static/admin/plugins/dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">-->
+<!--  </div>-->
+
+  <!-- Navbar -->
+  <!-- 头部html 的加载 -->
+  {{template "public/header.html" .}}
+
+  <!-- /.navbar -->
+  <!-- Main Sidebar Container -->
+
+  <!-- 左侧菜单栏 的加载 -->
+  {{template "public/sidebar.html" .}}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+
+  <!-- 访问路径 的加载 -->
+ {{template "public/router.html" .}}
+
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+  <!-- content 内容的加载 -->
+{{.LayoutContent}}
+
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+  <!-- footer的内容的加载 -->
+  {{template "public/footer.html" .}}
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<script>
+  $.widget.bridge('uibutton', $.ui.button)
+</script>
+
+</body>
+</html>

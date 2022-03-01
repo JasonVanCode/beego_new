@@ -1,0 +1,294 @@
+<!-- Main content -->
+<link rel="stylesheet" href="/static/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<style>
+    .form-group{
+        margin-right: 10px;
+    }
+</style>
+<section class="content">
+
+    <div class="card-header">
+        <div class="box">
+            <div class="box-body">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <input value="{{._keywords}}"
+                               name="_keywords" id="_keywords" class="form-control input-sm" placeholder="表名">
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-sm btn-primary" onclick="search()"><i class="fa fa-search"></i> 查询
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-sm btn-default" ><i class="fa  fa-eraser"></i> 清空查询
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <div class="box-header" style="margin-bottom: 10px">
+            <div>
+
+            </div>
+        </div>
+
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>表名</th>
+                <th>注释</th>
+                <th>引擎</th>
+                <th>排序规则</th>
+                <th>表大小</th>
+                <th>创建时间</th>
+                <th>修改时间</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="false" >
+        <div class="modal-dialog" role="document" >
+            <div class="modal-content" style="width: 800px;">
+                <div class="modal-header" style="width: 800px;">
+                    <h5 class="modal-title" id="exampleModalLabel">表详情</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="width: 800px;">
+                    <table  class="table table-bordered table-striped">
+                        <thead >
+                        <tr>
+                            <th>字段名</th>
+                            <th>类型</th>
+                            <th>排序规则</th>
+                            <th>是否为空</th>
+                            <th>是否为主键</th>
+                            <th>默认值</th>
+                            <th>更多信息</th>
+                            <th>备注</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabledetail">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</section>
+<script src="/static/admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+{{assets_js "/static/js/axios.min.js"}}
+<script>
+    //存储选中得数据
+    var dataSelectIds = [];
+    var table = null
+    $(function () {
+        // 为给定 ID 的 user 创建请求
+        table = $("#example1").DataTable({
+            paging: false,//分页操作
+            bLengthChange: false,//也就是页面上确认是否可以进行选择一页展示多少条
+            serverSide: false, //启用服务器端分页，要进行后端分页必须的环节
+            "ordering": false, // 禁止排序
+            ajax: function (data, callback, settings) {
+                //封装相应的请求参数，这里获取页大小和当前页码
+                //请求得url
+                let url = "/api/database/getList"
+                $.ajax({
+                    type: "get",
+                    url: url,
+                    success:function (d){
+                        let responseData = d.data;
+                        let returnData = {};
+                        if(responseData.length > 0){
+                            // onclick="checkThis(this)"
+                            for(let i =0;i<responseData.length;i++){
+                                responseData[i].Index = i+1;
+                                console.log(responseData[i].name)
+                                responseData[i].Operation = `<a class="btn btn-primary btn-xs" href="javascript:;" title="修改" data-toggle="tooltip" style="margin-right:5px" onclick="viewTable('`+responseData[i].name+`')">查看
+                                </a><a class="btn btn-danger btn-xs" style="margin-right:5px" href="javascript:;" onclick="Optimize('`+responseData[i].name+`')">
+                                    优化
+                                </a><a class="btn btn-warning btn-xs" style="margin-right:5px" onclick="Repair('`+responseData[i].name+`')">
+                                    修复
+                                </a>`
+                            }
+                        }
+                        returnData.data = responseData
+                        callback(returnData)
+                    }
+                });
+            },
+            columns: [
+                {
+                    "data": "Index",
+                    "sClass": "text-center"
+                },
+                {
+                    "data": "name",
+                    "sClass": "text-center"
+                },
+                {
+                    "data": "comment",
+                    "sClass": "text-center"
+                },
+                {
+                    "data": "engine",
+                    'sClass': "text-center"
+                },
+                {
+                    "data": "collation",
+                    'sClass': "text-center"
+                },
+                {
+                    "data": "data_length",
+                    'sClass': "text-center"
+                },
+                {
+                    "data": "create_time",
+                    'sClass': "text-center"
+                },
+                {
+                    "data": "update_time",
+                    'sClass': "text-center"
+                },
+                {
+                    "data": "Operation",
+                    'sClass': "text-center"
+                },
+            ],
+            "columnDefs": [
+                // 将Salary列变为红色
+                {
+                    "targets": [3], // 目标列位置，下标从0开始
+                    "data": "Status", // 数据列名
+                    "render": function(data, type, full) { // 返回自定义内容
+                        return `<a class="btn btn-success btn-sm ">`+data+`</a>`
+                    }
+                },
+            ],
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+        });
+    });
+    //查询
+    function search(){
+        table.ajax.reload();
+    }
+    //清空查询
+    function clearSearch(){
+        $("#_keywords").val("");
+        table.ajax.reload();
+    }
+    //查看表详情
+    function viewTable(name){
+        console.log(name);
+        let form = new FormData();
+        form.append("name",name );
+        axios({
+            url:'/api/database/view',
+            method: 'post',
+            headers: {
+                'Content-Type': 'form-data'
+            },
+            data:form,
+            withCredentials: true
+        }) .then(function (response) {
+            $('#exampleModal').modal('show');
+            let data = response.data.data;
+           if(data.length > 0 ){
+               let str = "";
+               $.each(data,function (k,v){
+                   str += `<tr><td>`+v.name+`</td><td>`+v.type+`</td><td>`+v.collation+`</td><td>`+v.null+`</td><td>`+v.key+`</td><td>`+v.default+`</td><td>`+v.extra+`</td><td>`+v.comment+`</td></tr>`;
+               })
+               $('#tabledetail').html(str)
+           }
+        });
+    }
+
+    //优化表
+    function Optimize(name){
+        let form = new FormData();
+        form.append("name",name)
+        axios({
+            url:'/api/database/optimize',
+            method: 'post',
+            headers: {
+                'Content-Type': 'form-data'
+            },
+            data:form,
+            withCredentials: true
+        }) .then(function (response) {
+            let data = response.data
+            if(data.code == 1 ){
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '操作成功',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '操作失败',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        });
+
+    }
+
+    //修复表
+    function Repair(name){
+        let form = new FormData();
+        form.append("name",name)
+        axios({
+            url:'/api/database/repair',
+            method: 'post',
+            headers: {
+                'Content-Type': 'form-data'
+            },
+            data:form,
+            withCredentials: true
+        }) .then(function (response) {
+            let data = response.data
+            if(data.code == 1 ){
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '操作成功',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }else{
+                Swal.fire({
+                    position: 'top-end',
+                    icon: 'error',
+                    title: '操作失败',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+            }
+        });
+
+    }
+
+</script>

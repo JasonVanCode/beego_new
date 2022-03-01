@@ -1,0 +1,189 @@
+<!--{{assets_css "/static/admin/plugins/jsgrid/jsgrid.min.css"}}-->
+<!--{{assets_css "/static/admin/plugins/jsgrid/jsgrid-theme.min.css"}}-->
+<!-- Main content -->
+<link rel="stylesheet" href="/static/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<style>
+    .form-group{
+        margin-right: 10px;
+    }
+</style>
+<section class="content">
+
+    <div class="card-body">
+        <div class="box-header" style="margin-bottom: 10px">
+            <div>
+                <a title="添加" data-toggle="tooltip" class="btn btn-primary btn-sm"  href='{{urlfor "MenuController.Add"}}
+                '>
+                <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-success btn-sm ReloadButton" data-toggle="tooltip" title="刷新">
+                    <i class="fa fa-refresh"></i> 刷新
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">菜单数据</h3>
+                    </div>
+                    <!-- ./card-header -->
+                    <div class="card-body p-0">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>菜单</th>
+                                <th>URL</th>
+                                <th>父级ID</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+<!--                            <tr>-->
+<!--                                <td class="border-0">183</td>-->
+<!--                                <td class="border-0">编辑</td>-->
+<!--                            </tr>-->
+<!--                            <tr data-widget="expandable-table" aria-expanded="false">-->
+<!--                                <td>-->
+<!--                                    <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>-->
+<!--                                    219-->
+<!--                                </td>-->
+<!--                                <td>编辑</td>-->
+<!--                            </tr>-->
+<!--                            <tr class="expandable-body">-->
+<!--                                <td>-->
+<!--                                    <div class="p-0">-->
+<!--                                        <table class="table table-hover">-->
+<!--                                            <tbody>-->
+<!--                                            <tr data-widget="expandable-table" aria-expanded="false">-->
+<!--                                                <td>-->
+<!--                                                    <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>-->
+<!--                                                    219-1-->
+<!--                                                </td>-->
+<!--                                                <td>编辑</td>-->
+<!--                                            </tr>-->
+<!--                                            <tr class="expandable-body">-->
+<!--                                                <td>-->
+<!--                                                    <div class="p-0">-->
+<!--                                                        <table class="table table-hover">-->
+<!--                                                            <tbody>-->
+<!--                                                            <tr>-->
+<!--                                                                <td>219-1-1</td>-->
+<!--                                                                <td>编辑</td>-->
+<!--                                                            </tr>-->
+<!--                                                            <tr>-->
+<!--                                                                <td>219-1-2</td>-->
+<!--                                                                <td>编辑</td>-->
+
+<!--                                                            </tr>-->
+<!--                                                            <tr>-->
+<!--                                                                <td>219-1-3</td>-->
+<!--                                                                <td>编辑</td>-->
+
+<!--                                                            </tr>-->
+<!--                                                            </tbody>-->
+<!--                                                        </table>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+<!--                                            <tr data-widget="expandable-table" aria-expanded="false">-->
+<!--                                                <td>-->
+<!--                                                    <button type="button" class="btn btn-primary p-0">-->
+<!--                                                        <i class="expandable-table-caret fas fa-caret-right fa-fw"></i>-->
+<!--                                                    </button>-->
+<!--                                                    219-2-->
+<!--                                                </td>-->
+<!--                                                <td>编辑</td>-->
+
+<!--                                            </tr>-->
+<!--                                            <tr class="expandable-body">-->
+<!--                                                <td>-->
+<!--                                                    <div class="p-0">-->
+<!--                                                        <table class="table table-hover">-->
+<!--                                                            <tbody>-->
+<!--                                                            <tr>-->
+<!--                                                                <td>219-2-1</td>-->
+<!--                                                                <td>编辑</td>-->
+
+<!--                                                            </tr>-->
+<!--                                                            <tr>-->
+<!--                                                                <td>219-2-2</td>-->
+<!--                                                                <td>编辑</td>-->
+
+<!--                                                            </tr>-->
+<!--                                                            <tr>-->
+<!--                                                                <td>219-2-3</td>-->
+<!--                                                                <td>编辑</td>-->
+
+<!--                                                            </tr>-->
+<!--                                                            </tbody>-->
+<!--                                                        </table>-->
+<!--                                                    </div>-->
+<!--                                                </td>-->
+<!--                                            </tr>-->
+<!--                                            <tr>-->
+<!--                                                <td>219-3</td>-->
+<!--                                                <td>编辑</td>-->
+
+<!--                                            </tr>-->
+<!--                                            </tbody>-->
+<!--                                        </table>-->
+<!--                                    </div>-->
+<!--                                </td>-->
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>657</td>-->
+<!--                                <td>编辑</td>-->
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>175</td>-->
+<!--                                <td>编辑</td>-->
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>134</td>-->
+<!--                                <td>编辑</td>-->
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>494</td>-->
+<!--                                <td>编辑</td>-->
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>832</td>-->
+<!--                                <td>编辑</td>-->
+
+<!--                            </tr>-->
+<!--                            <tr>-->
+<!--                                <td>982</td>-->
+<!--                                <td>编辑</td>-->
+
+<!--                            </tr>-->
+
+                            {{str2html .table}}
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+
+
+    </div>
+    <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</section>
+
+<script>
+
+
+</script>

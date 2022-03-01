@@ -1,0 +1,207 @@
+
+<section class="content">
+  <div class="container-fluid">
+    <!-- Small boxes (Stat box) -->
+    <div class="row">
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-info">
+          <div class="inner">
+            <h3>{{.user_count}}</h3>
+
+            <p>后台用户</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-bag"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-success">
+          <div class="inner">
+            <h3>{{.menu_count}}</h3>
+
+            <p>后台角色</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-stats-bars"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-warning">
+          <div class="inner">
+            <h3>{{.role_count}}</h3>
+
+            <p>后台菜单</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-person-add"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+      <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-danger">
+          <div class="inner">
+            <h3>{{.log_count}}</h3>
+
+            <p>操作日志</p>
+          </div>
+          <div class="icon">
+            <i class="ion ion-pie-graph"></i>
+          </div>
+          <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+      </div>
+      <!-- ./col -->
+    </div>
+    <!-- /.row -->
+    <!-- Main row -->
+    <div class="row">
+      <!-- Left col -->
+      <section class="col-lg-7 connectedSortable">
+        <!-- Custom tabs (Charts with tabs)-->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              访问信息
+            </h3>
+          </div><!-- /.card-header -->
+          <div class="card-body">
+            <div class="tab-content p-0">
+                <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>1.</th>
+                        <td>用户系统</td>
+                        <td>{{.sys_info.user_os}}</td>
+                      </tr>
+                      <tr>
+                        <td>2.</td>
+                        <td>用户IP</td>
+                     
+                        <td>{{.sys_info.ip}}</td>
+                      </tr>
+                      <tr>
+                        <td>3.</td>
+                        <td>浏览器</td></td>
+                        <td>{{.sys_info.user_browser}}</td>
+                      </tr>
+                      <tr>
+                        <td>4.</td>
+                        <td>所在城市</td>
+                        <td>{{.sys_info.ip}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+              <!-- Morris chart - Sales -->
+              <!-- <div class="chart tab-pane active" id="revenue-chart"
+                   style="position: relative; height: 300px;">
+                  <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>
+               </div>
+              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
+                <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>
+              </div> -->
+            </div>
+          </div><!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              系统信息
+            </h3>
+          </div><!-- /.card-header -->
+          <div class="card-body">
+            <div class="tab-content p-0">
+                <table class="table">
+                    <tbody>
+                      <tr>
+                        <th>1.</th>
+                        <td>服务器系统</td>
+                        <td>{{.sys_info.user_os}}</td>
+                      </tr>
+                      <tr>
+                        <td>2.</td>
+                        <td>GO版本</td>
+                        <td>{{.sys_info.go_version}}</td>
+                      </tr>
+                      <tr>
+                        <td>3.</td>
+                        <td>Beego版本</td></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td>4.</td>
+                        <td>GO当前时区</td>
+                        <td>{{.timezone}}</td>
+                      </tr>
+                      <tr>
+                        <td>5.</td>
+                        <td>Mysql版本</td>
+                        <td>{{.database_version}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+              <!-- Morris chart - Sales -->
+              <!-- <div class="chart tab-pane active" id="revenue-chart"
+                   style="position: relative; height: 300px;">
+                  <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>
+               </div>
+              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
+                <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>
+              </div> -->
+            </div>
+          </div><!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+      </section>
+      <!-- /.Left col -->
+      <!-- right col (We are only adding the ID to make the widgets sortable)-->
+      <section class="col-lg-5 connectedSortable">
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">
+              依赖关系
+            </h3>
+          </div><!-- /.card-header -->
+          <div class="card-body">
+            <div class="tab-content p-0">
+                <table class="table">
+                    <tbody>
+                    {{range $index, $elem := .sys_info.request_module}}
+                      <tr>
+                        <th>{{ $index }}.</th>
+                        <td>{{$elem.Name}}</td>
+                        <td><span class="badge bg-danger">{{$elem.Version}}</span></td>
+                      </tr>
+                    {{end}}
+                    </tbody>
+                  </table>
+              <!-- Morris chart - Sales -->
+              <!-- <div class="chart tab-pane active" id="revenue-chart"
+                   style="position: relative; height: 300px;">
+                  <canvas id="revenue-chart-canvas" height="300" style="height: 300px;"></canvas>
+               </div>
+              <div class="chart tab-pane" id="sales-chart" style="position: relative; height: 300px;">
+                <canvas id="sales-chart-canvas" height="300" style="height: 300px;"></canvas>
+              </div> -->
+            </div>
+          </div><!-- /.card-body -->
+        </div>
+
+      </section>
+      <!-- right col -->
+    </div>
+    <!-- /.row (main row) -->
+  </div><!-- /.container-fluid -->
+</section>

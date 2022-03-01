@@ -1,0 +1,380 @@
+<!-- Main content -->
+<link rel="stylesheet" href="/static/admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
+<link rel="stylesheet" href="/static/admin/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+<style>
+    .form-group{
+        margin-right: 10px;
+    }
+</style>
+<section class="content">
+
+    <div class="card-header">
+        <div class="box">
+            <div class="box-body">
+                <div class="form-inline">
+                    <div class="form-group">
+                        <input value="{{._keywords}}"
+                               name="_keywords" id="_keywords" class="form-control input-sm" placeholder="角色名">
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-sm btn-primary" onclick="search()"><i class="fa fa-search"></i> 查询
+                        </button>
+                    </div>
+                    <div class="form-group">
+                        <button onclick="clearSearch()" class="btn btn-sm btn-default" ><i class="fa  fa-eraser"></i> 清空查询
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <div class="box-header" style="margin-bottom: 10px">
+            <div>
+                <a title="添加" data-toggle="tooltip" class="btn btn-primary btn-sm"  href="{{urlfor "UserController.Add"}}
+                ">
+                <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-danger btn-sm AjaxButton" href="javascript:;" onclick="delRole()">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+                <a class="btn btn-success btn-sm AjaxButton" onclick="unAbleRole('',1)">
+                    <i class="fa fa-circle"></i> 启用
+                </a>
+
+                <a class="btn btn-warning btn-sm AjaxButton" onclick="unAbleRole('',0)">
+                    <i class="fa fa-circle"></i> 禁用
+                </a>
+
+                <a class="btn btn-success btn-sm ReloadButton" data-toggle="tooltip" title="刷新">
+                    <i class="fa fa-refresh"></i> 刷新
+                </a>
+            </div>
+        </div>
+        <table id="example1" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+                <th><input id="dataCheckAll" type="checkbox" onclick="checkAll(this)" class="checkbox" placeholder="全选/取消"></th>
+                <th>序号</th>
+                <th>名称</th>
+                <th>简介</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+    </div>
+    <!-- /.card-body -->
+    </div>
+    <!-- /.card -->
+</section>
+<script src="/static/admin/plugins/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
+
+{{assets_js "/static/js/axios.min.js"}}
+
+<script>
+    //存储选中得数据
+    var dataSelectIds = [];
+    var table = null
+    $(function () {
+        // 为给定 ID 的 user 创建请求
+        table = $("#example1").DataTable({
+            paging: true,//分页操作
+            pageLength: 10,//每页显示10条数据
+            bLengthChange: true,//也就是页面上确认是否可以进行选择一页展示多少条
+            serverSide: true, //启用服务器端分页，要进行后端分页必须的环节
+            "ordering": false, // 禁止排序
+            language : {
+                "lengthMenu":   "_MENU_ 记录/页",
+                "zeroRecords":  "没有匹配的记录",
+                "info":         "第 _START_ 至 _END_ 项记录，共 _TOTAL_ 项",
+                "infoEmpty":    "第 0 至 0 项记录，共 0 项",
+                "paginate" : {
+                    "first" : "首页",
+                    "last" : "尾页",
+                    "previous" : "上一页",
+                    "next" : "下一页"
+                },
+            },
+            ajax: function (data, callback, settings) {
+                //封装相应的请求参数，这里获取页大小和当前页码
+                console.log(data)
+                //如果是全选，就不去后台请求
+                if( $("#dataCheckAll").is(':checked')){
+                    return;
+                }
+                let pageSize = data.length;//页面显示记录条数，在页面显示每页显示多少项的时候,页大小
+                let page = data.start
+                //请求得url
+                let url = "/api/admin_role/getlist?page=" + page + "&perPage="+ pageSize
+                if($("#_keywords").val()){
+                    url += "&name=" + $("#_keywords").val()
+                }
+                $.ajax({
+                    type: "get",
+                    url: url,
+                    success:function (d){
+                        let responseData = d.data.data
+                        let returnData = {};
+                        if(responseData.length > 0){
+                            // onclick="checkThis(this)"
+                            for(let i =0;i<responseData.length;i++){
+                                responseData[i].CheckBox = `<input type="checkbox" onclick="checkThis(this)" name="data-checkbox" data-id="`+responseData[i].Id +`" class="checkbox data-list-check" value="`+responseData[i].Id +`" placeholder="选择/取消">`
+                                responseData[i].Index = i+1;
+                                responseData[i].Status = responseData[i].Status == 1?"使用":"停用";
+                                responseData[i].Operation = `<a href="/admin/admin_role/access?id=`+responseData[i].Id +`"
+                                   class="btn btn-success btn-xs" style="margin-right:5px">
+                                    <i class="fa fa-key"></i> 授权
+                                </a><a href="/admin/admin_role/edit?id=`+responseData[i].Id +`"
+                                   class="btn btn-primary btn-xs" title="修改" data-toggle="tooltip" style="margin-right:5px">编辑
+                                </a><a class="btn btn-danger btn-xs" style="margin-right:5px" href="javascript:;" onclick="delRole(`+responseData[i].Id+`)">
+                                    <i class="fa fa-trash"></i> 删除
+                                </a><a class="btn btn-warning btn-xs" style="margin-right:5px" onclick="unAbleRole(`+responseData[i].Id+`,0)">
+                                    <i class="fa fa-circle"></i> 禁用
+                                </a>`
+                            }
+                        }
+                        returnData.recordsTotal =  d.data.count
+                        returnData.recordsFiltered = d.data.count
+                        returnData.data = responseData
+                        callback(returnData)
+                    }
+                });
+            },
+            columns: [
+                {
+                    "orderable" : false,
+                    "data": "CheckBox",
+                    "sClass": "text-center"
+                },
+                {
+                    "data": "Index",
+                    "sClass": "text-center"
+                },
+                {
+                    "data": "Name",
+                    "sClass": "text-center"
+                },
+                {
+                    "orderable" : false,
+                    "data": "Description",
+                    'sClass': "text-center"
+                },
+                {
+                    "orderable" : false,
+                    "data": "Status",
+                    'sClass': "text-center"
+                },
+                {
+                    "orderable" : false,
+                    "data": "Operation",
+                    'sClass': "text-center"
+                },
+            ],
+            "columnDefs": [
+                // 将Salary列变为红色
+                {
+                    "targets": [2], // 目标列位置，下标从0开始
+                    "data": "Status", // 数据列名
+                    "render": function(data, type, full) { // 返回自定义内容
+                        return `<a class="btn btn-success btn-sm ">`+data+`</a>`
+                    }
+                },
+            ],
+            "responsive": true, "lengthChange": false, "autoWidth": false,
+            "pagingType": "full_numbers"
+        });
+    });
+    //查询
+    function search(){
+        table.ajax.reload();
+    }
+    //清空查询
+    function clearSearch(){
+        $("#_keywords").val("");
+        table.ajax.reload();
+    }
+
+    //删除角色
+    function delRole(id = ""){
+        if(id == "" && dataSelectIds.length == 0){
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: '请选择要删除的数据',
+                showConfirmButton: false,
+                timer: 1500
+            })
+            return;
+        }
+        if (id == ""){
+            id = dataSelectIds.join(",");
+        }
+        Swal.fire({
+            title: '确定要删除该条角色数据吗？',
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: '确定',
+            denyButtonText: `取消`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            var form = new FormData();
+            form.append("id",id );
+            if (result.isConfirmed) {
+                axios({
+                    url:'/api/admin_role/del',
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'form-data'
+                    },
+                    data:form,
+                    withCredentials: true
+                }) .then(function (response) {
+                    console.log(response);
+                    //清空选中的数据
+                    dataSelectIds = [];
+                    let data = response.data;
+                    if(data.code == 1 ){
+                        clearAllCheck();
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '删除成功',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        //删除数据，后台刷新
+                        table.ajax.reload();
+                    }else{
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: '删除失败',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                });
+            }
+        })
+    }
+
+    //禁用/启用角色
+    function unAbleRole(id = "",type){
+        if(id == "" && dataSelectIds.length == 0){
+            let msg = type == 1?"请选择要启用的角色":"请选择要禁用的角色";
+            Swal.fire({
+                position: 'top-end',
+                icon: 'error',
+                title: msg,
+                showConfirmButton: false,
+                timer: 1500
+            })
+            return;
+        }
+        if (id == ""){
+            id = dataSelectIds.join(",");
+        }
+        Swal.fire({
+            title: type == 1?'确定要启用该角色吗？':"确定要禁用该角色吗？",
+            showDenyButton: false,
+            showCancelButton: true,
+            confirmButtonText: '确定',
+            denyButtonText: `取消`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            var form = new FormData();
+            form.append("id",id );
+            form.append("status",type)
+            if (result.isConfirmed) {
+                axios({
+                    url:'/api/admin_role/enable',
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'form-data'
+                    },
+                    data:form,
+                    withCredentials: true
+                }) .then(function (response) {
+                    //清空选中的数据
+                    dataSelectIds = [];
+                    let data = response.data;
+                    if(data.code == 1 ){
+                        clearAllCheck();
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '操作成功',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        //删除数据，后台刷新
+                        table.ajax.reload();
+                    }else{
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: '操作失败',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                });
+            }
+        })
+    }
+
+    //清除选中以及选中的数据
+    function clearAllCheck(){
+        var all_check = $("input[name='data-checkbox']");
+        all_check.prop("checked", false);
+        $("#dataCheckAll").prop("checked", false);
+        dataSelectIds = [];
+    }
+
+    /*全部选择/取消*/
+    function checkAll(obj) {
+        dataSelectIds = [];
+        var all_check = $("input[name='data-checkbox']");
+        if ($(obj).is(':checked')) {
+            $(all_check).each(function () {
+                $(this).attr("checked", true)
+                dataSelectIds.push(this.value);
+            });
+        } else {
+            all_check.prop("checked", false);
+        }
+    }
+
+    /*列表中单个选择和取消*/
+    function checkThis(obj) {
+        var id = $(obj).attr('value');
+        if ($(obj).is(':checked')) {
+            if ($.inArray(id, dataSelectIds) < 0) {
+                dataSelectIds.push(id);
+            }
+        } else {
+            if ($.inArray(id, dataSelectIds) > -1) {
+                dataSelectIds.splice($.inArray(id, dataSelectIds), 1);
+            }
+        }
+
+        var all_length = $("input[name='data-checkbox']").length;
+        var checked_length = $("input[name='data-checkbox']:checked").length;
+        if (all_length === checked_length) {
+            $("#dataCheckAll").prop("checked", true);
+        } else {
+            $("#dataCheckAll").prop("checked", false);
+        }
+        console.log(dataSelectIds);
+    }
+
+
+</script>

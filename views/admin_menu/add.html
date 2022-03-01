@@ -1,0 +1,174 @@
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- left column -->
+            <div class="col-md-12">
+                <!-- jquery validation -->
+                <div class="card card-primary">
+                    <!-- /.card-header -->
+                    <!-- form start -->
+                    <form id="dataForm">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">上级菜单</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <select name="parent_id" id="parent_id" class="form-control select2">
+                                        <option value="0">/</option>
+                                        {{str2html .parents}}
+                                    </select>
+                                </div>
+                                <script>
+                                    $('#parent_id').select2();
+                                </script>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">名称</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <input type="input" name="name" class="form-control" id="name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">url</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <input type="input" name="url" class="form-control"  id="url">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">排序</label>
+                                <div class="col-sm-10 col-md-4">
+                                <input max="9999" min="1" type="number" id="sort_id" name="sort_id"
+                                       value="1000"
+                                       class="form-control input-number field-number" placeholder="默认1000">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="is_show" class="col-sm-2 control-label">是否显示</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <input class="input-switch" id="is_show" value="1" checked type="checkbox"/>
+                                    <input class="switch field-switch" placeholder="状态" name="status"
+                                           value="1" hidden/>
+                                </div>
+                            </div>
+                            <script>
+                                $('#is_show').bootstrapSwitch({
+                                    onText: "是",
+                                    offText: "否",
+                                    onColor: "success",
+                                    offColor: "danger",
+                                    onSwitchChange: function (event, state) {
+                                        $(event.target).closest('.bootstrap-switch').next().val(state ? '1' : '0').change();
+                                    }
+                                });
+                            </script>
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">日志请求方式</label>
+                                <div class="col-sm-10 col-md-4">
+                                    <select name="log_method" id="log_method" class="form-control select2">
+                                        {{range $key,$val := .log_method }}
+                                        <option value="{{$val}}">{{$val}}</option>
+                                        {{end}}
+                                    </select>
+                                </div>
+                                <script>
+                                    $("#log_method").select2()
+                                </script>
+<!--                                <input type="password" name="password" class="form-control"  placeholder="Password">-->
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">提交</button>
+                        </div>
+                    </form>
+                </div>
+                <!-- /.card -->
+            </div>
+            <!--/.col (left) -->
+            <!-- right column -->
+            <div class="col-md-6">
+
+            </div>
+            <!--/.col (right) -->
+        </div>
+        <!-- /.row -->
+    </div><!-- /.container-fluid -->
+</section>
+
+<script>
+    $(function(){
+        $("#dataForm").validate({
+            rules: {
+                name: {
+                    required: true,
+                },
+                url: {
+                    required: true
+                },
+                icon: {
+                    required: true
+                },
+                sort_id: {
+                    required: true
+                }
+            },
+            messages: {
+                name: {
+                    required: "名称不能为空",
+                },
+                url: {
+                    required: "url不能为空",
+                },
+                icon: {
+                    required: "图标不能为空",
+                },
+                sort_id: {
+                    required: "排序不能为空",
+                },
+            },
+            submitHandler:function(form){
+                var form = new FormData();
+                form.append("parent_id", $("#parent_id").val());
+                form.append("name", $("#name").val());
+                form.append("url", $("#url").val());
+                form.append("sort_id", $("#sort_id").val());
+                form.append("is_show", $("#is_show").val());
+                form.append("log_method", $("#log_method").val());
+                axios({
+                    url:'/api/admin_menu/create',
+                    method: 'post',
+                    headers: {
+                        'Content-Type': 'form-data'
+                    },
+                    data:form,
+                    withCredentials: true
+                }) .then(function (response) {
+                    console.log(response);
+                    let data = response.data;
+                    if(data.code == 1 ){
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: '成功',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                        // window.location = "/admin/admin_role/index"
+                    }else{
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'error',
+                            title: '失败',
+                            showConfirmButton: false,
+                            timer: 1500
+                        })
+                    }
+                });
+            }
+        });
+    });
+
+
+</script>
